@@ -19,7 +19,7 @@ import { signCred } from '../../../utils/credential'
 import { useSession } from 'next-auth/react'
 import { Logo } from '../../../Assets/SVGs'
 import useGoogleDrive from '../../../hooks/useGoogleDrive'
-import { storeFileTokens } from '../../../firebase/storage'
+import { storeFileTokens, getFileViaFirebase } from '../../../firebase/storage'
 interface FormProps {
   fullName: string
   email: string
@@ -45,6 +45,7 @@ const Form: React.FC<FormProps> = ({ fullName, email }) => {
   const [tooltipText, setTooltipText] = useState('saving your recommendation')
   const [recId, setRecId] = useState<string | null>(null)
   const [selectedFiles, setSelectedFiles] = useState<any[]>([])
+  const [credentialType, setCredentialType] = useState<string>('')
 
   const defaultValues: FormData = storedValue
 
@@ -66,6 +67,39 @@ const Form: React.FC<FormProps> = ({ fullName, email }) => {
   const formData = watch()
   const params = useParams()
   const VSFileId = params?.id as string
+
+  // Fetch credential data to determine type
+  useEffect(() => {
+    const fetchCredentialType = async () => {
+      if (VSFileId) {
+        try {
+          let vcData = await getFileViaFirebase(VSFileId)
+          vcData = JSON.parse(vcData.body)
+
+          // Determine credential type using same logic as ComprehensiveClaimDetails
+          const types = vcData.type || []
+          const subject = vcData.credentialSubject || {}
+
+          if (types.includes('EmploymentCredential')) {
+            setCredentialType('employment')
+          } else if (types.includes('VolunteeringCredential')) {
+            setCredentialType('volunteering')
+          } else if (types.includes('PerformanceReviewCredential')) {
+            setCredentialType('performance-review')
+          } else if (subject.documentType || subject.documentNumber || subject.issuingCountry) {
+            setCredentialType('identity-verification')
+          } else {
+            setCredentialType('skill') // Default
+          }
+        } catch (error) {
+          console.error('Error fetching credential type:', error)
+          setCredentialType('skill') // Default fallback
+        }
+      }
+    }
+
+    fetchCredentialType()
+  }, [VSFileId])
 
   useEffect(() => {
     if (JSON.stringify(formData) !== JSON.stringify(storedValue)) {
@@ -280,6 +314,7 @@ const Form: React.FC<FormProps> = ({ fullName, email }) => {
                 control={control}
                 selectedFiles={selectedFiles}
                 setSelectedFiles={setSelectedFiles}
+                credentialType={credentialType}
               />
             )}
             {activeStep === 3 && (
@@ -292,6 +327,7 @@ const Form: React.FC<FormProps> = ({ fullName, email }) => {
                 isLoading={isLoading}
                 onUpdateFormData={handleUpdateFormData}
                 selectedFiles={selectedFiles}
+                credentialType={credentialType}
               />
             )}
             {activeStep === 4 && (

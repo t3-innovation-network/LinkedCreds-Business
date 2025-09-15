@@ -128,6 +128,7 @@ const Page = () => {
   const [vcId, setVcId] = useState<string | null>(null)
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('')
   const [qrCodeDataUrlMobile, setQrCodeDataUrlMobile] = useState<string>('')
+  const [credentialType, setCredentialType] = useState<string>('skill')
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -157,6 +158,19 @@ const Page = () => {
       return params.get(key)
     }
     return null
+  }
+
+  // Get dynamic titles based on credential type
+  const getRecommendationTitle = () => {
+    return credentialType === 'employment'
+      ? 'Confirmation of Job Title and Employment Details'
+      : 'Recommendation'
+  }
+
+  const getQualificationsTitle = () => {
+    return credentialType === 'employment'
+      ? 'Recommender\'s Role and Supporting Information'
+      : 'The qualifications'
   }
 
   useEffect(() => {
@@ -285,6 +299,34 @@ const Page = () => {
         const recBody = recData?.body ? JSON.parse(recData?.body) : recData
 
         setRecommendation(recBody.credentialSubject)
+
+        // Fetch the original credential to determine its type
+        if (vcId) {
+          try {
+            const vcData = await getFileViaFirebase(vcId)
+            if (vcData) {
+              const vcBody = vcData?.body ? JSON.parse(vcData?.body) : vcData
+              const types = vcBody.type || []
+              const subject = vcBody.credentialSubject || {}
+
+              // Determine credential type using same logic as other components
+              if (types.includes('EmploymentCredential')) {
+                setCredentialType('employment')
+              } else if (types.includes('VolunteeringCredential')) {
+                setCredentialType('volunteering')
+              } else if (types.includes('PerformanceReviewCredential')) {
+                setCredentialType('performance-review')
+              } else if (subject.documentType || subject.documentNumber || subject.issuingCountry) {
+                setCredentialType('identity-verification')
+              } else {
+                setCredentialType('skill') // Default
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching credential type:', error)
+            setCredentialType('skill') // Default fallback
+          }
+        }
       } catch (error) {
         console.error('Error fetching recommendation:', error)
       } finally {
@@ -292,7 +334,7 @@ const Page = () => {
       }
     }
     fetchRecommendation()
-  }, [recId, storage])
+  }, [recId, vcId, storage])
 
   const handleUnhide = async () => {
     if (isRejected && recId) {
@@ -541,7 +583,7 @@ const Page = () => {
 
           <CardContent sx={{ py: 3 }}>
             <ContentSection>
-              <SectionTitle>Recommendation</SectionTitle>
+              <SectionTitle>{getRecommendationTitle()}</SectionTitle>
               <Typography color='text.primary'>
                 <span
                   dangerouslySetInnerHTML={{
@@ -563,7 +605,7 @@ const Page = () => {
             </ContentSection>
 
             <ContentSection>
-              <SectionTitle>The qualifications</SectionTitle>
+              <SectionTitle>{getQualificationsTitle()}</SectionTitle>
               <Typography color='text.primary'>
                 <span
                   dangerouslySetInnerHTML={{

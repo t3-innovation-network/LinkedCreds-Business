@@ -45,7 +45,11 @@ const LinkAdder: React.FC<LinkAdderProps> = ({
   onNameChange,
   onUrlChange,
   maxLinks = 5,
-  errors = {}
+  errors = {},
+  nameLabel = 'Title',
+  urlLabel = 'URL',
+  namePlaceholder = 'Give this URL a clear name',
+  urlPlaceholder = 'www.example.com'
 }) => {
   const theme = useTheme()
   const [urlErrors, setUrlErrors] = useState<string[]>([])
@@ -78,7 +82,7 @@ const LinkAdder: React.FC<LinkAdderProps> = ({
                   htmlFor='url'
                   sx={{ fontWeight: 500, color: 'gray.700', display: 'block', mb: 1 }}
                 >
-                  URL
+                  {urlLabel}
                 </Typography>
                 <TextField
                   id='url'
@@ -86,7 +90,7 @@ const LinkAdder: React.FC<LinkAdderProps> = ({
                   onChange={e => handleUrlValidationChange(e, index)}
                   fullWidth
                   variant='outlined'
-                  placeholder='www.example.com'
+                  placeholder={urlPlaceholder}
                   InputProps={{
                     sx: { bgcolor: 'blue.50', borderRadius: 1 }
                   }}
@@ -104,7 +108,7 @@ const LinkAdder: React.FC<LinkAdderProps> = ({
                   htmlFor='title'
                   sx={{ fontWeight: 500, color: 'gray.700', display: 'block', mb: 1 }}
                 >
-                  Title
+                  {nameLabel}
                 </Typography>
                 <TextField
                   id='title'
@@ -112,7 +116,7 @@ const LinkAdder: React.FC<LinkAdderProps> = ({
                   onChange={e => onNameChange(index, e.target.value)}
                   fullWidth
                   variant='outlined'
-                  placeholder='Give this URL a clear name'
+                  placeholder={namePlaceholder}
                   aria-labelledby={`name-label-${index}`}
                   error={!!errors[index]?.name}
                   helperText={errors[index]?.name?.message}
