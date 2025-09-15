@@ -50,7 +50,7 @@ interface CredentialSubject {
   name?: string
   fullName?: string
   persons?: string
-  credentialType?: string  // Added for external credential detection
+  credentialType?: string // Added for external credential detection
 
   // Achievement-based (legacy skill credentials)
   achievement?: Achievement[]
@@ -95,6 +95,12 @@ interface CredentialSubject {
   recommendationText?: string
   qualifications?: string
   explainAnswer?: string
+
+  // Identity verification fields
+  documentType?: string
+  documentNumber?: string
+  issuingCountry?: string
+  expirationDate?: string
 }
 
 interface ClaimDetail {
@@ -162,17 +168,22 @@ const extractActualContent = (text: string): string => {
 // Helper function to determine VC type
 const getVCType = (
   credential: ClaimDetail
-): 'employment' | 'volunteering' | 'performance-review' | 'skill' | 'recommendation' => {
+):
+  | 'employment'
+  | 'volunteering'
+  | 'performance-review'
+  | 'skill'
+  | 'recommendation'
+  | 'identity-verification' => {
   const types = credential.type || []
+  const subject = credential.credentialSubject || {}
 
   if (types.includes('EmploymentCredential')) return 'employment'
   if (types.includes('VolunteeringCredential')) return 'volunteering'
   if (types.includes('PerformanceReviewCredential')) return 'performance-review'
-  if (
-    credential.credentialSubject?.howKnow ||
-    credential.credentialSubject?.recommendationText
-  )
-    return 'recommendation'
+  if (subject.howKnow || subject.recommendationText) return 'recommendation'
+  if (subject.documentType || subject.documentNumber || subject.issuingCountry)
+    return 'identity-verification'
 
   return 'skill' // Default to skill/achievement for legacy credentials
 }
@@ -193,6 +204,9 @@ const getCredentialTitle = (credential: ClaimDetail, vcType: string): string => 
       return prTitle ? `Performance Review: ${prTitle}` : 'Performance Review'
     case 'recommendation':
       return 'Recommendation'
+    case 'identity-verification':
+      const docType = subject?.documentType
+      return docType ? `Identity Verification: ${docType}` : 'Identity Verification'
     case 'skill':
     default:
       const skillTitle = subject?.achievement?.[0]?.name || subject?.credentialName
@@ -414,33 +428,53 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
   // Check if this is an external credential
   const isExternalCredential = () => {
     if (!claimDetail) return false
-    
+
+    const types = claimDetail.type || []
     const subject = claimDetail.credentialSubject || {}
-    
-    // Check if it has our native fields that our viewer expects
-    // Our native schema should have:
+
+    // If it's one of our native credential types, it's not external
+    if (
+      types.includes('EmploymentCredential') ||
+      types.includes('VolunteeringCredential') ||
+      types.includes('PerformanceReviewCredential')
+    ) {
+      return false
+    }
+
+    // Check if it's a recommendation credential (based on content)
+    if (subject.howKnow || subject.recommendationText) {
+      return false
+    }
+
+    // Check if it's an identity verification credential (based on specific fields)
+    if (subject.documentType || subject.documentNumber || subject.issuingCountry) {
+      return false
+    }
+
+    // Check if it has our native skill credential fields
+    // Our native skill credentials should have:
     // - credentialSubject.name (person's name)
-    // - credentialSubject.credentialType (skill/volunteer/employment/etc)  
+    // - credentialSubject.credentialType (skill/volunteer/employment/etc)
     // - credentialSubject.achievement as an array
-    
+
     const hasNativeName = typeof subject.name === 'string'
     const hasCredentialType = typeof subject.credentialType === 'string'
     const hasArrayAchievement = Array.isArray(subject.achievement)
-    
-    // If it has all our expected fields, it's native
+
+    // If it has all our expected skill credential fields, it's native
     if (hasNativeName && hasCredentialType && hasArrayAchievement) {
       return false
     }
-    
+
     // Otherwise, it's external
     return true
   }
-  
+
   // If it's an external credential, use the generic viewer
   if (isExternalCredential()) {
     return (
       <Container sx={{ maxWidth: '800px' }}>
-        <GenericCredentialViewer 
+        <GenericCredentialViewer
           credential={claimDetail}
           qrCodeDataUrl={qrCodeDataUrl}
           fileID={fileID}
@@ -448,7 +482,7 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
       </Container>
     )
   }
-  
+
   // Render different content based on VC type
   const renderCredentialContent = () => {
     switch (vcType) {
@@ -688,6 +722,49 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
           </Box>
         )
 
+      case 'identity-verification':
+        return (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant='h6' sx={{ mb: 2, fontWeight: 600 }}>
+              Identity Verification Details
+            </Typography>
+            <Grid container spacing={2}>
+              {credentialSubject.documentType && (
+                <Grid item xs={12} sm={6}>
+                  <Typography variant='body2' color='text.secondary'>
+                    Document Type:
+                  </Typography>
+                  <Typography>{credentialSubject.documentType}</Typography>
+                </Grid>
+              )}
+              {credentialSubject.documentNumber && (
+                <Grid item xs={12} sm={6}>
+                  <Typography variant='body2' color='text.secondary'>
+                    Document Number:
+                  </Typography>
+                  <Typography>{credentialSubject.documentNumber}</Typography>
+                </Grid>
+              )}
+              {credentialSubject.issuingCountry && (
+                <Grid item xs={12} sm={6}>
+                  <Typography variant='body2' color='text.secondary'>
+                    Issuing Country:
+                  </Typography>
+                  <Typography>{credentialSubject.issuingCountry}</Typography>
+                </Grid>
+              )}
+              {credentialSubject.expirationDate && (
+                <Grid item xs={12} sm={6}>
+                  <Typography variant='body2' color='text.secondary'>
+                    Document Expiration:
+                  </Typography>
+                  <Typography>{credentialSubject.expirationDate}</Typography>
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+        )
+
       case 'skill':
       default:
         const achievement = credentialSubject?.achievement?.[0]
@@ -853,6 +930,18 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
             >
               {credentialTitle}
             </Typography>
+
+            <Box sx={{ mt: 2 }}>
+              {(claimDetail.type || []).map((type: string, index: number) => (
+                <Chip
+                  key={index}
+                  label={type}
+                  size='small'
+                  sx={{ mr: 1, mb: 1 }}
+                  color={type === 'VerifiableCredential' ? 'primary' : 'default'}
+                />
+              ))}
+            </Box>
           </Box>
 
           {(credentialSubject?.duration || credentialSubject?.credentialDuration) && (
@@ -1266,6 +1355,25 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
             )}
           </Box>
         )}
+
+      {/* Raw JSON Preview (collapsed by default) */}
+      <details style={{ marginTop: '20px' }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 600 }}>View Raw JSON</summary>
+        <Box
+          sx={{
+            mt: 2,
+            p: 2,
+            bgcolor: '#f5f5f5',
+            borderRadius: '4px',
+            overflow: 'auto',
+            maxHeight: '400px'
+          }}
+        >
+          <pre style={{ margin: 0, fontSize: '12px' }}>
+            {JSON.stringify(claimDetail, null, 2)}
+          </pre>
+        </Box>
+      </details>
     </Container>
   )
 }
