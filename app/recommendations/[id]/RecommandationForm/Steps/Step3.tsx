@@ -35,6 +35,7 @@ interface FileUploadAndListProps {
   readonly selectedFiles: readonly FileItem[]
   readonly setSelectedFiles: React.Dispatch<React.SetStateAction<FileItem[]>>
   readonly watch: <T>(name: string) => T
+  readonly credentialType?: string
 }
 
 const StyledTipBox = styled(Box)(({ theme }) => ({
@@ -55,7 +56,8 @@ const FileUploadAndList: React.FC<FileUploadAndListProps> = ({
   setValue,
   selectedFiles,
   setSelectedFiles,
-  watch
+  watch,
+  credentialType = 'skill'
 }) => {
   const { loading, setUploadImageFn } = useStepContext()
   const [showLinkAdder, setShowLinkAdder] = useState(false)
@@ -244,6 +246,25 @@ const FileUploadAndList: React.FC<FileUploadAndListProps> = ({
     setUploadImageFn(() => handleUpload)
   }, [handleUpload, setUploadImageFn])
 
+  // Get dynamic text based on credential type
+  const getSupportingDocsText = () => {
+    return credentialType === 'employment'
+      ? 'Please provide confirmation of the company URL and whether the employee works for a specific sub-unit, including that unit\'s own URL if applicable. Also, please upload an image of the employer\'s business card or employer ID as Media.'
+      : 'The strength of your recommendation is significantly enhanced when you provide supporting evidence of your qualifications.'
+  }
+
+  const getLinkPlaceholders = () => {
+    return credentialType === 'employment'
+      ? {
+          name: '(e.g., Company website, Department page)',
+          url: 'https://'
+        }
+      : {
+          name: '(e.g., LinkedIn profile, github repo)',
+          url: 'https://'
+        }
+  }
+
   return (
     <Box
       sx={{
@@ -264,8 +285,7 @@ const FileUploadAndList: React.FC<FileUploadAndListProps> = ({
           Supporting Documents and Links{' '}
         </Typography>
         <Typography sx={{ marginBottom: '10px', fontSize: '14px' }}>
-          The strength of your recommendation is significantly enhanced when you provide
-          supporting evidence of your qualifications.
+          {getSupportingDocsText()}
         </Typography>
       </Box>
       <Box
@@ -290,8 +310,8 @@ const FileUploadAndList: React.FC<FileUploadAndListProps> = ({
                 maxLinks={5}
                 nameLabel='Name'
                 urlLabel='URL'
-                namePlaceholder='(e.g., LinkedIn profile, github repo, etc.)'
-                urlPlaceholder='https://'
+                namePlaceholder={getLinkPlaceholders().name}
+                urlPlaceholder={getLinkPlaceholders().url}
               />{' '}
             </Box>
           )}

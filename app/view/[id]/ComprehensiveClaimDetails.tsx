@@ -221,6 +221,18 @@ const getPersonName = (subject: CredentialSubject): string => {
   return name || 'Unknown Person'
 }
 
+// Helper function to get dynamic recommendation titles based on credential type
+const getRecommendationDisplayTitles = (vcType: string) => {
+  return {
+    recommendationTitle: vcType === 'employment'
+      ? 'Confirmation of Job Title and Employment Details:'
+      : 'Recommendation:',
+    qualificationsTitle: vcType === 'employment'
+      ? 'Recommender\'s Role and Supporting Information:'
+      : 'Your Qualifications:'
+  }
+}
+
 const cleanHTML = (htmlContent: any): string => {
   if (typeof htmlContent !== 'string') {
     return ''
@@ -1245,7 +1257,7 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
                         {comment.credentialSubject?.recommendationText && (
                           <Box sx={{ mt: 1 }}>
                             <Typography variant='subtitle2' color='text.secondary'>
-                              Recommendation:
+                              {getRecommendationDisplayTitles(vcType).recommendationTitle}
                             </Typography>
                             <Typography variant='body2'>
                               <span
@@ -1262,7 +1274,7 @@ const ComprehensiveClaimDetails: React.FC<ComprehensiveClaimDetailsProps> = ({
                         {comment.credentialSubject?.qualifications && (
                           <Box sx={{ mt: 1 }}>
                             <Typography variant='subtitle2' color='text.secondary'>
-                              Your Qualifications:
+                              {getRecommendationDisplayTitles(vcType).qualificationsTitle}
                             </Typography>
                             <Typography variant='body2'>
                               <span

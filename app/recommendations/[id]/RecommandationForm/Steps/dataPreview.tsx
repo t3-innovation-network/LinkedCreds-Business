@@ -29,6 +29,7 @@ interface DataPreviewProps {
   isLoading: boolean
   onUpdateFormData: (newData: any) => void
   selectedFiles?: any[]
+  credentialType?: string
 }
 
 const cleanHTML = (htmlContent: any): string => {
@@ -185,13 +186,27 @@ const DataPreview: React.FC<DataPreviewProps> = ({
   formData,
   isLoading,
   onUpdateFormData,
-  selectedFiles = []
+  selectedFiles = [],
+  credentialType = 'skill'
 }) => {
   const handleUpdateField = (field: keyof FormData, value: string) => {
     onUpdateFormData({
       ...formData,
       [field]: value
     })
+  }
+
+  // Get dynamic titles based on credential type
+  const getRecommendationTitle = () => {
+    return credentialType === 'employment'
+      ? 'Confirmation of Job Title and Employment Details'
+      : 'Recommendation'
+  }
+
+  const getQualificationsTitle = () => {
+    return credentialType === 'employment'
+      ? 'Recommender\'s Role and Supporting Information'
+      : 'Your Qualifications'
   }
 
   return (
@@ -235,7 +250,7 @@ const DataPreview: React.FC<DataPreviewProps> = ({
         {typeof formData.recommendationText === 'string' &&
           formData.recommendationText.trim() && (
             <EditableCard
-              title='Recommendation'
+              title={getRecommendationTitle()}
               content={formData.recommendationText}
               onSave={value => handleUpdateField('recommendationText', value)}
               multiline
@@ -245,7 +260,7 @@ const DataPreview: React.FC<DataPreviewProps> = ({
         {typeof formData.qualifications === 'string' &&
           formData.qualifications.trim() && (
             <EditableCard
-              title='Your Qualifications'
+              title={getQualificationsTitle()}
               content={formData.qualifications}
               onSave={value => handleUpdateField('qualifications', value)}
               multiline
