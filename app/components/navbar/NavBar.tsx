@@ -53,12 +53,13 @@ const NavBar = () => {
     <Box
       sx={{
         width: '100vw',
-        height: { xs: '27px', md: '100px' },
+        height: { xs: '60px', sm: '70px', md: '80px', lg: '100px' },
         display: 'flex',
         position: 'sticky',
         alignItems: 'center',
         backgroundColor: 'white',
         justifyContent: 'space-between',
+        px: { xs: '16px', sm: '20px', md: '0px' },
         my: { xs: '18px', md: '0px' },
         boxShadow: {
           md: '0px 4px 10px rgba(209, 213, 219, 0.5)'
@@ -75,7 +76,16 @@ const NavBar = () => {
         }}
       >
         <Link href='/' aria-label='LinkedCreds - Business Home'>
-          <Box sx={{ display: 'flex', alignItems: 'center', marginRight: '0px' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              marginRight: '0px',
+              '&:hover': {
+                opacity: 0.8
+              }
+            }}
+          >
             <Logo />
           </Box>
         </Link>
@@ -83,9 +93,12 @@ const NavBar = () => {
           <Typography
             sx={{
               fontWeight: '700',
-              fontSize: { xs: '18px', md: '24px' },
+              fontSize: { xs: '16px', sm: '18px', md: '22px', lg: '24px' },
               color: theme.palette.t3DarkSlateBlue,
-              fontFamily: 'inter'
+              fontFamily: 'inter',
+              '&:hover': {
+                opacity: 0.8
+              }
             }}
           >
             LinkedCreds - Business
@@ -102,7 +115,7 @@ const NavBar = () => {
           alignItems: 'center',
           justifyContent: session ? 'space-between' : 'flex-end',
           mr: { xs: '15px', md: '3.6vw' },
-          gap: '3.9vw',
+          gap: { md: '1.5vw', lg: '3.9vw' },
           textWrap: 'nowrap'
         }}
       >
@@ -113,12 +126,15 @@ const NavBar = () => {
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  '&:hover': {
+                    opacity: 0.8
+                  }
                 }}
               >
                 <Typography
                   sx={{
-                    fontSize: '16px',
+                    fontSize: { md: '13px', lg: '16px' },
                     fontWeight: isActive('/skillform') ? '600' : '400',
                     color: isActive('/skillform')
                       ? '#003FE0'
@@ -142,11 +158,18 @@ const NavBar = () => {
             </Link>
             <Link href='/credentialImportForm' passHref>
               <Box
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  '&:hover': {
+                    opacity: 0.8
+                  }
+                }}
               >
                 <Typography
                   sx={{
-                    fontSize: '16px',
+                    fontSize: { md: '13px', lg: '16px' },
                     fontWeight: isActive('/credentialImportForm') ? '600' : '400',
                     color: isActive('/credentialImportForm')
                       ? '#003FE0'
@@ -170,11 +193,18 @@ const NavBar = () => {
             </Link>
             <Link href='/claims' passHref>
               <Box
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  '&:hover': {
+                    opacity: 0.8
+                  }
+                }}
               >
                 <Typography
                   sx={{
-                    fontSize: '16px',
+                    fontSize: { md: '13px', lg: '16px' },
                     fontWeight: isActive('/claims') ? '600' : '400',
                     color: isActive('/claims')
                       ? '#003FE0'
@@ -198,11 +228,18 @@ const NavBar = () => {
             </Link>
             <Link href='/analytics' passHref>
               <Box
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  '&:hover': {
+                    opacity: 0.8
+                  }
+                }}
               >
                 <Typography
                   sx={{
-                    fontSize: '16px',
+                    fontSize: { md: '13px', lg: '16px' },
                     fontWeight: isActive('/analytics') ? '600' : '400',
                     color: isActive('/analytics')
                       ? '#003FE0'
@@ -226,11 +263,18 @@ const NavBar = () => {
             </Link>
             <Link href='/help' passHref>
               <Box
-                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  '&:hover': {
+                    opacity: 0.8
+                  }
+                }}
               >
                 <Typography
                   sx={{
-                    fontSize: '16px',
+                    fontSize: { md: '13px', lg: '16px' },
                     fontWeight: isActive('/help') ? '600' : '400',
                     color: isActive('/help') ? '#003FE0' : theme.palette.t3DarkSlateBlue,
                     cursor: 'pointer'
@@ -325,9 +369,19 @@ const NavBar = () => {
             <Avatar
               src={session.user?.image ?? ''}
               alt={session.user?.name || 'User Avatar'}
-              sx={{ width: 40, height: 40 }}
+              sx={{
+                width: { md: 32, lg: 40 },
+                height: { md: 32, lg: 40 }
+              }}
             />
-            <Typography sx={{ color: theme.palette.t3DarkSlateBlue, fontWeight: '500' }}>
+            <Typography
+              sx={{
+                color: theme.palette.t3DarkSlateBlue,
+                fontWeight: '500',
+                fontSize: { md: '14px', lg: '16px' },
+                display: { md: 'none', xl: 'block' }
+              }}
+            >
               {session.user?.name}
             </Typography>
             <IconButton
@@ -337,8 +391,14 @@ const NavBar = () => {
               aria-expanded={open ? 'true' : undefined}
               aria-haspopup='true'
               onClick={handleClick}
+              sx={{
+                padding: { md: '4px', lg: '8px' },
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 63, 224, 0.04)'
+                }
+              }}
             >
-              <MoreVertIcon />
+              <MoreVertIcon sx={{ fontSize: { md: '18px', lg: '24px' } }} />
             </IconButton>
             <Menu
               id='long-menu'
@@ -355,13 +415,18 @@ const NavBar = () => {
         ) : (
           <Button
             sx={{
-              width: '148px',
+              width: { md: '100px', lg: '148px' },
+              height: { md: '32px', lg: '40px' },
               fontFamily: 'roboto',
-              fontSize: '16px',
+              fontSize: { md: '14px', lg: '16px' },
               fontWeight: '500',
               lineHeight: '20px',
               textAlign: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              '&:hover': {
+                backgroundColor: theme.palette.t3ButtonBlue,
+                opacity: 0.9
+              }
             }}
             variant='actionButton'
             onClick={() => signIn('google')}
@@ -372,7 +437,13 @@ const NavBar = () => {
       </Box>
 
       {/* Small Screen - Hamburger Menu */}
-      <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+      <Box
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          alignItems: 'center',
+          pr: { xs: '16px', sm: '20px' }
+        }}
+      >
         <HamburgerMenu aria-label='Open menu' />
       </Box>
     </Box>

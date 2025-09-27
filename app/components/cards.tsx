@@ -45,6 +45,15 @@ const Card = ({
   showDuration = true,
   showEvidence = true
 }: CardProps) => {
+  // Responsive sizing logic
+  const isSmallCard = width === '160px'
+  const cardFontSizes = {
+    title: isSmallCard ? '12px' : '14px',
+    description: isSmallCard ? '8px' : '9px',
+    criteria: isSmallCard ? '8px' : '9px',
+    evidence: isSmallCard ? '8px' : '9px',
+    label: isSmallCard ? '9px' : '10px'
+  }
   return (
     <Box
       sx={{
@@ -87,14 +96,12 @@ const Card = ({
           <Typography
             sx={{
               color: '#202E5B',
-              // fontSize: '14px',
-              // fontWeight: 600,
               flex: 1,
               ml: '5.5px',
               fontFamily: 'Inter',
-              fontSize: '14px',
+              fontSize: cardFontSizes.title,
               fontWeight: 700,
-              // lineHeight: normal,
+              lineHeight: isSmallCard ? '10px' : '12px',
               letterSpacing: '0.12px',
               textTransform: 'capitalize'
             }}
@@ -108,7 +115,7 @@ const Card = ({
           sx={{
             color: '#202E5B',
             fontFamily: 'Inter',
-            fontSize: '9px',
+            fontSize: cardFontSizes.description,
             mb: 1,
             lineHeight: '12px'
           }}
@@ -184,7 +191,7 @@ const Card = ({
           <Typography
             sx={{
               color: '#000E40',
-              fontSize: '10px',
+              fontSize: cardFontSizes.label,
               fontFamily: 'Inter',
               fontWeight: 400,
               mb: 0.25
@@ -197,7 +204,7 @@ const Card = ({
               key={`criteria-${index}`}
               sx={{
                 color: '#000E40',
-                fontSize: '9px',
+                fontSize: cardFontSizes.criteria,
                 fontFamily: 'Inter',
                 fontWeight: 400,
                 pl: 1,
@@ -214,7 +221,7 @@ const Card = ({
             <Typography
               sx={{
                 color: '#000E40',
-                fontSize: '10px',
+                fontSize: cardFontSizes.label,
                 fontFamily: 'Inter',
                 fontWeight: 400,
                 mb: 0.25
@@ -225,7 +232,7 @@ const Card = ({
             <Typography
               sx={{
                 color: '#000E40',
-                fontSize: '9px',
+                fontSize: cardFontSizes.criteria,
                 fontFamily: 'Inter',
                 pl: 1
               }}
@@ -240,7 +247,7 @@ const Card = ({
             <Typography
               sx={{
                 color: '#000E40',
-                fontSize: '10px',
+                fontSize: cardFontSizes.label,
                 fontWeight: 400,
                 fontFamily: 'Inter',
                 mb: 0.25
@@ -253,7 +260,7 @@ const Card = ({
                 key={`evidence-${index}`}
                 sx={{
                   color: '#000E40',
-                  fontSize: '9px',
+                  fontSize: cardFontSizes.evidence,
                   fontFamily: 'Inter',
                   pl: 1,
                   lineHeight: 1.2

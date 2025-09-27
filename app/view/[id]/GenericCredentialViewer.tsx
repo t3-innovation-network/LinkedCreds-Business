@@ -40,7 +40,7 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
   // Extract subject information for OpenBadge credentials
   const getSubjectInfo = () => {
     const subject = credential.credentialSubject || {}
-    
+
     // For OpenBadge credentials
     if (subject.achievement && !Array.isArray(subject.achievement)) {
       return {
@@ -49,7 +49,7 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
         type: subject.type
       }
     }
-    
+
     // For our native format
     if (subject.achievement && Array.isArray(subject.achievement)) {
       return {
@@ -58,35 +58,40 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
         type: subject.type
       }
     }
-    
+
     return subject
   }
 
   const issuer = getIssuerInfo()
   const subject = getSubjectInfo()
-  const credentialTypes = Array.isArray(credential.type) ? credential.type : [credential.type]
+  const credentialTypes = Array.isArray(credential.type)
+    ? credential.type
+    : [credential.type]
 
   return (
     <Paper
       elevation={0}
       sx={{
-        p: 3,
+        p: { xs: 2, sm: 3 },
         border: '1px solid #003FE0',
         borderRadius: '10px',
-        position: 'relative'
+        position: 'relative',
+        maxWidth: '100%',
+        overflow: 'hidden'
       }}
     >
       {/* QR Code and View Source */}
       {fileID && qrCodeDataUrl && (
         <Box
           sx={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
+            position: { xs: 'static', sm: 'absolute' },
+            top: { xs: 'auto', sm: '10px' },
+            right: { xs: 'auto', sm: '10px' },
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: { xs: 'column', sm: 'row' },
             alignItems: 'center',
-            gap: '12px'
+            gap: '12px',
+            mb: { xs: 2, sm: 0 }
           }}
         >
           <Link
@@ -104,7 +109,7 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
           <img
             src={qrCodeDataUrl}
             alt='QR Code for credential source'
-            style={{ width: '120px', height: '120px' }}
+            style={{ width: '80px', height: '80px' }}
           />
         </Box>
       )}
@@ -115,7 +120,7 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
           <Chip
             key={index}
             label={type}
-            size="small"
+            size='small'
             sx={{ mr: 1, mb: 1 }}
             color={type === 'VerifiableCredential' ? 'primary' : 'default'}
           />
@@ -126,13 +131,27 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', gap: '5px', alignItems: 'center', mb: 2 }}>
           <SVGBadge />
-          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          <Typography
+            variant='h5'
+            sx={{
+              fontWeight: 700,
+              fontSize: { xs: '18px', sm: '24px' },
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word'
+            }}
+          >
             {credential.name || subject.achievement?.name || 'Unnamed Credential'}
           </Typography>
         </Box>
 
         {credential.description && (
-          <Typography sx={{ mb: 2 }}>
+          <Typography
+            sx={{
+              mb: 2,
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word'
+            }}
+          >
             {credential.description}
           </Typography>
         )}
@@ -143,17 +162,42 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
       {/* Issuer Information */}
       {issuer.name && (
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
+          <Typography
+            variant='h6'
+            sx={{ mb: 1, fontWeight: 600, fontSize: { xs: '16px', sm: '20px' } }}
+          >
             Issued By
           </Typography>
-          <Typography>{issuer.name}</Typography>
+          <Typography
+            sx={{
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word'
+            }}
+          >
+            {issuer.name}
+          </Typography>
           {issuer.url && (
-            <Link href={issuer.url} target="_blank" sx={{ fontSize: '14px' }}>
+            <Link
+              href={issuer.url}
+              target='_blank'
+              sx={{
+                fontSize: '14px',
+                wordBreak: 'break-all',
+                overflowWrap: 'break-word'
+              }}
+            >
               {issuer.url}
             </Link>
           )}
           {issuer.email && (
-            <Typography sx={{ fontSize: '14px', color: 'text.secondary' }}>
+            <Typography
+              sx={{
+                fontSize: '14px',
+                color: 'text.secondary',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word'
+              }}
+            >
               {issuer.email}
             </Typography>
           )}
@@ -163,30 +207,60 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
       {/* Subject/Achievement Information */}
       {subject.achievement && (
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
+          <Typography
+            variant='h6'
+            sx={{ mb: 1, fontWeight: 600, fontSize: { xs: '16px', sm: '20px' } }}
+          >
             Achievement Details
           </Typography>
-          
+
           {subject.achievement.name && (
-            <Typography sx={{ fontWeight: 500, mb: 1 }}>
+            <Typography
+              sx={{
+                fontWeight: 500,
+                mb: 1,
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word'
+              }}
+            >
               {subject.achievement.name}
             </Typography>
           )}
-          
+
           {subject.achievement.description && (
-            <Typography sx={{ mb: 1 }}>
+            <Typography
+              sx={{
+                mb: 1,
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word'
+              }}
+            >
               {subject.achievement.description}
             </Typography>
           )}
-          
+
           {subject.achievement.criteria && (
             <Box sx={{ mt: 2 }}>
               <Typography sx={{ fontWeight: 500 }}>Criteria:</Typography>
               {typeof subject.achievement.criteria === 'string' ? (
-                <Typography>{subject.achievement.criteria}</Typography>
+                <Typography
+                  sx={{
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word'
+                  }}
+                >
+                  {subject.achievement.criteria}
+                </Typography>
               ) : (
                 subject.achievement.criteria.narrative && (
-                  <Typography>{subject.achievement.criteria.narrative}</Typography>
+                  <Typography
+                    sx={{
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word'
+                    }}
+                  >
+                    {subject.achievement.criteria.narrative}
+                  </Typography>
                 )
               )}
             </Box>
@@ -197,12 +271,33 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
       {/* Dates */}
       <Box sx={{ mb: 3 }}>
         {credential.issuanceDate && (
-          <Typography sx={{ fontSize: '14px', color: 'text.secondary' }}>
+          <Typography
+            sx={{
+              fontSize: '14px',
+              color: 'text.secondary',
+              fontFamily: 'monospace',
+              backgroundColor: '#f5f5f5',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              display: 'inline-block',
+              mb: 1
+            }}
+          >
             Issued: {new Date(credential.issuanceDate).toLocaleDateString()}
           </Typography>
         )}
         {credential.expirationDate && (
-          <Typography sx={{ fontSize: '14px', color: 'text.secondary' }}>
+          <Typography
+            sx={{
+              fontSize: '14px',
+              color: 'text.secondary',
+              fontFamily: 'monospace',
+              backgroundColor: '#f5f5f5',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              display: 'inline-block'
+            }}
+          >
             Expires: {new Date(credential.expirationDate).toLocaleDateString()}
           </Typography>
         )}
@@ -213,14 +308,14 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
         <Typography sx={{ fontSize: '14px', fontWeight: 700, color: '#000E40' }}>
           Credential Status
         </Typography>
-        
+
         <Box sx={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
           <Box sx={{ borderRadius: '4px', bgcolor: '#C2F1BE', p: '4px' }}>
             <CheckMarkSVG />
           </Box>
           <Typography>Has a valid digital signature</Typography>
         </Box>
-        
+
         {credential.credentialStatus && (
           <Box sx={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
             <Box sx={{ borderRadius: '4px', bgcolor: '#C2F1BE', p: '4px' }}>
@@ -233,9 +328,7 @@ const GenericCredentialViewer: React.FC<GenericCredentialViewerProps> = ({
 
       {/* Raw JSON Preview (collapsed by default) */}
       <details style={{ marginTop: '20px' }}>
-        <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
-          View Raw JSON
-        </summary>
+        <summary style={{ cursor: 'pointer', fontWeight: 600 }}>View Raw JSON</summary>
         <Box
           sx={{
             mt: 2,

@@ -28,7 +28,13 @@ const HamburgerMenu = () => {
   return (
     <>
       <IconButton
-        sx={{ padding: '0px', mr: '15px' }}
+        sx={{
+          padding: { xs: '8px', sm: '10px' },
+          mr: { xs: '0px', sm: '5px' },
+          '&:hover': {
+            backgroundColor: 'rgba(0, 63, 224, 0.04)'
+          }
+        }}
         onClick={toggleDrawer}
         aria-label='Open menu'
       >
@@ -37,8 +43,8 @@ const HamburgerMenu = () => {
       <Drawer anchor='left' open={isOpen} onClose={toggleDrawer}>
         <Box
           sx={{
-            width: '320px',
-            padding: '20px',
+            width: { xs: '280px', sm: '300px' },
+            padding: { xs: '16px', sm: '20px' },
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start'
@@ -64,7 +70,7 @@ const HamburgerMenu = () => {
                   sx={{
                     ml: '8px',
                     fontWeight: 700,
-                    fontSize: '18px',
+                    fontSize: { xs: '16px', sm: '18px' },
                     color: '#000'
                   }}
                 >
@@ -119,7 +125,7 @@ const HamburgerMenu = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', sm: '16px' },
                           fontWeight: isActive('/skillform') ? '600' : '400',
                           color: isActive('/skillform') ? '#003FE0' : 'inherit',
                           cursor: 'pointer',
@@ -164,7 +170,7 @@ const HamburgerMenu = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', sm: '16px' },
                           fontWeight: isActive('/claims') ? '600' : '400',
                           color: isActive('/claims') ? '#003FE0' : 'inherit',
                           cursor: 'pointer',
@@ -209,7 +215,7 @@ const HamburgerMenu = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', sm: '16px' },
                           fontWeight: isActive('/analytics') ? '600' : '400',
                           color: isActive('/analytics') ? '#003FE0' : 'inherit',
                           cursor: 'pointer',
@@ -254,7 +260,7 @@ const HamburgerMenu = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', sm: '16px' },
                           fontWeight: isActive('/help') ? '600' : '400',
                           color: isActive('/help') ? '#003FE0' : 'inherit',
                           cursor: 'pointer',
@@ -299,7 +305,7 @@ const HamburgerMenu = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', sm: '16px' },
                           fontWeight: isActive('/fullanalytics') ? '600' : '400',
                           color: isActive('/fullanalytics') ? '#003FE0' : 'inherit',
                           cursor: 'pointer',
@@ -344,7 +350,7 @@ const HamburgerMenu = () => {
                     >
                       <Typography
                         sx={{
-                          fontSize: '16px',
+                          fontSize: { xs: '14px', sm: '16px' },
                           fontWeight: isActive('/credentialImportForm') ? '600' : '400',
                           color: isActive('/credentialImportForm')
                             ? '#003FE0'
@@ -373,16 +379,27 @@ const HamburgerMenu = () => {
             ) : (
               <>
                 {/* Login description and features */}
-                <Typography variant='h6' sx={{ fontWeight: 400, fontSize: '16px' }}>
+                <Typography
+                  variant='h6'
+                  sx={{ fontWeight: 400, fontSize: { xs: '14px', sm: '16px' } }}
+                >
                   Login to access your LinkedCreds - Business
                 </Typography>
-                <Typography sx={{ fontSize: '13px', fontWeight: 400 }}>
+                <Typography
+                  sx={{ fontSize: { xs: '12px', sm: '13px' }, fontWeight: 400 }}
+                >
                   With LinkedCreds - Business, you can:
                 </Typography>
                 {features.map(feature => (
                   <Box key={feature.id} sx={{ display: 'flex', alignItems: 'center' }}>
                     <SVGCheckMarks />
-                    <Typography sx={{ ml: 1, fontSize: '13px', fontFamily: 'lato' }}>
+                    <Typography
+                      sx={{
+                        ml: 1,
+                        fontSize: { xs: '12px', sm: '13px' },
+                        fontFamily: 'lato'
+                      }}
+                    >
                       {feature.name}
                     </Typography>
                   </Box>
@@ -428,7 +445,13 @@ const HamburgerMenu = () => {
                   mt: '22px'
                 }}
               >
-                <Typography sx={{ fontWeight: 400, fontSize: '16px', height: '22px' }}>
+                <Typography
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: { xs: '14px', sm: '16px' },
+                    height: '22px'
+                  }}
+                >
                   About LinkedCreds - Business
                 </Typography>
                 <ArrowForwardIosIcon fontSize='small' />
@@ -444,7 +467,13 @@ const HamburgerMenu = () => {
                   height: '22px'
                 }}
               >
-                <Typography sx={{ fontWeight: 400, fontSize: '16px', height: '22px' }}>
+                <Typography
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: { xs: '14px', sm: '16px' },
+                    height: '22px'
+                  }}
+                >
                   Help & Instructions
                 </Typography>
                 <ArrowForwardIosIcon fontSize='small' />
@@ -460,7 +489,13 @@ const HamburgerMenu = () => {
                   pb: '6px'
                 }}
               >
-                <Typography sx={{ fontWeight: 400, fontSize: '16px', height: '22px' }}>
+                <Typography
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: { xs: '14px', sm: '16px' },
+                    height: '22px'
+                  }}
+                >
                   Support
                 </Typography>
                 <ArrowForwardIosIcon fontSize='small' />
