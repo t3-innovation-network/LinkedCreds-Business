@@ -78,6 +78,8 @@ export default defineConfig({
   webServer: {
     command: useDevServer ? 'yarn dev' : 'yarn build && yarn start -p 3000',
     url: 'http://localhost:3000',
+    // `yarn build` can exceed Playwright’s default 60s in CI.
+    timeout: 3 * 60 * 1000,
     reuseExistingServer,
     env: {
       ...process.env,
