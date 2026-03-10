@@ -1,5 +1,7 @@
 import { CredentialEngine, GoogleDriveStorage } from '@cooperation/vc-storage'
 import { FormData } from '../[formType]/form/types/Types'
+import { normalizeSkillClaimFormData, SkillClaimFormData } from './normalization/hrContextSkillClaim'
+import { ISkillClaimCredential } from 'hr-context'
 
 interface RecommendationI {
   recommendationText: string
@@ -113,13 +115,9 @@ const signCred = async (
         case 'skill':
         case 'identity-verification':
         default:
-          // Use generic signVC for skills and other types
-          signedVC = await credentialEngine.signVC({
-            data: processedData,
-            type: 'VC',
-            keyPair,
-            issuerId: issuerDid
-          })
+          // Sign skill claim credential using the HR Context data model
+          const normalizedData: SkillClaimFormData = normalizeSkillClaimFormData(processedData as unknown as FormData)
+          signedVC = await credentialEngine.signSkillClaimVC(normalizedData as unknown as ISkillClaimCredential, keyPair, issuerDid)
           break
       }
     }
