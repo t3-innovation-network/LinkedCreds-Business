@@ -1,3 +1,5 @@
+import { ISkill } from 'hr-context'
+
 // Interfaces for the credential data
 export interface Address {
   addressCountry: string
@@ -83,7 +85,8 @@ export interface FormData {
   company?: string
   employeeName?: string
   employeeJobTitle?: string
-  [key: string]: string | number | boolean | Portfolio[] | string[] | undefined
+  skills?: ISkill[]
+  [key: string]: string | number | boolean | Portfolio[] | string[] | ISkill[] | undefined
 }
 
 // Component Props for the form
