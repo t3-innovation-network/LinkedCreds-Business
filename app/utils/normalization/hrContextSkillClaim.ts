@@ -8,7 +8,7 @@ export type SkillClaimFormData = {
 }
 
 export function normalizeSkillClaimFormData(formData: FormData): SkillClaimFormData {
-  const skill0 = formData.skills?.[0]
+  const skill = formData.skills?.[0] // pick the first skill in the array
   const skillName = skill0?.name ?? formData.credentialName ?? ''
   const skillDescription = formData.credentialDescription ?? undefined
   const narrative = typeof formData.description === 'string'
