@@ -33,6 +33,7 @@
     "nodemailer": "^6.9.14",
     "pdfjs-dist": "4.8.69",
     "qrcode": "^1.5.4",
+    "quill": "^2.0.3",
     "react": "^18",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18",
